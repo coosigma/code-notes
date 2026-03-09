@@ -53,3 +53,10 @@ This repository is intended to be used as a GitHub Pages project site:
    - **Folder**: `/docs`
 
 After pushing changes and rendering `docs/`, GitHub Pages will serve the site at `https://coosigma.github.io/code-notes`.
+
+## Copyright
+
+© 2026 Bing Liang. All rights reserved.
+
+This project is currently under active development and therefore keeps all rights reserved.
+In the future, it may be relicensed under the latest version of the GNU family of licenses.
