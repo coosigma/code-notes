@@ -134,6 +134,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./pages/configure-next.html"> 
 <span class="menu-text">QFactory – Next.js Scaffold Configurator</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./pages/ts-playground.html"> 
+<span class="menu-text">TypeScript Playground</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -150,10 +154,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#interactive-typescript-notebook-landing-page" id="toc-interactive-typescript-notebook-landing-page" class="nav-link active" data-scroll-target="#interactive-typescript-notebook-landing-page">Interactive TypeScript notebook (landing page)</a>
-  <ul class="collapse">
-  <li><a href="#how-to-use-this-notebook" id="toc-how-to-use-this-notebook" class="nav-link" data-scroll-target="#how-to-use-this-notebook">How to use this notebook</a></li>
-  </ul></li>
+  <li><a href="#interactive-typescript-notebook-landing-page" id="toc-interactive-typescript-notebook-landing-page" class="nav-link active" data-scroll-target="#interactive-typescript-notebook-landing-page">Interactive TypeScript notebook (landing page)</a></li>
   </ul>
 </nav>
     </div>
@@ -181,72 +182,115 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="interactive-typescript-notebook-landing-page" class="level2">
 <h2 class="anchored" data-anchor-id="interactive-typescript-notebook-landing-page">Interactive TypeScript notebook (landing page)</h2>
-<p>This site is your personal code notebook. The landing page provides a simple in-browser playground for TypeScript snippets. TypeScript source is compiled to JavaScript in the browser using the <code>typescript</code> compiler library and then executed. This is intended for small experiments and notes, not for untrusted code.</p>
-<p>All code and comments below are written in English. You can write your explanations in any language you like.</p>
+<p>This site is your personal code notebook. The landing page now behaves like a simple Jupyter-style cell: your code is only executed when you click the Run button. The default example uses real TypeScript with type annotations.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" data-startfrom="19" data-source-offset="-47"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 18;"><span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {Inputs} <span class="im">from</span> <span class="st">"@observablehq/inputs"</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">// --- TypeScript source input -----------------------------------------------</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>viewof tsSource <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">textarea</span>({</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"TypeScript source"</span><span class="op">,</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">value</span><span class="op">:</span> <span class="vs">`// Example JavaScript snippet</span><span class="sc">\n</span><span class="vs">// Edit this code and the output</span><span class="sc">\n</span><span class="vs">// will update automatically.</span><span class="sc">\n\n</span><span class="vs">function greet(name) {</span><span class="sc">\n</span><span class="vs">  return "Hello, " + name + "!"</span><span class="sc">\n</span><span class="vs">}</span><span class="sc">\n\n</span><span class="vs">const message = greet("world")</span><span class="sc">\n</span><span class="vs">console.log(message)</span><span class="sc">\n</span><span class="vs">`</span><span class="op">,</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">rows</span><span class="op">:</span> <span class="dv">16</span><span class="op">,</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">spellcheck</span><span class="op">:</span> <span class="kw">false</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Compilation to JavaScript --------------------------------------------</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" data-startfrom="13" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 12;"><span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {Inputs} <span class="im">from</span> <span class="st">"@observablehq/inputs"</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Editable TypeScript / JavaScript source -------------------------------</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>DEFAULT_TS_NOTEBOOK_CODE <span class="op">=</span> [</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"// Example TypeScript snippet (edit me)"</span><span class="op">,</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"// Code will run ONLY when you click the Run button."</span><span class="op">,</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span><span class="op">,</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"export function greet(name: string): string {"</span><span class="op">,</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"  return `Hello, ${name}!`;"</span><span class="op">,</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"}"</span><span class="op">,</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span><span class="op">,</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"console.log(greet(</span><span class="sc">\"</span><span class="st">notebook</span><span class="sc">\"</span><span class="st">));"</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>]<span class="op">.</span><span class="fu">join</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>editor <span class="op">=</span> <span class="fu">html</span><span class="vs">`&lt;textarea id="ts-notebook-editor"</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="vs">    spellcheck="false"</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="vs">    style="width:100%;min-height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;line-height:1.5;border:1px solid #ddd;border-radius:6px;padding:8px;"&gt;</span><span class="sc">${</span>DEFAULT_TS_NOTEBOOK_CODE<span class="sc">}</span><span class="vs">&lt;/textarea&gt;`</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">// For maximum compatibility with the Quarto OJS runtime, this notebook</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">// currently executes the source directly as JavaScript without a separate</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">// TypeScript compilation step. TypeScript-only syntax (such as type</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">// annotations) may therefore cause runtime errors.</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>compiled <span class="op">=</span> (() <span class="kw">=&gt;</span> {</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> { <span class="dt">js</span><span class="op">:</span> tsSource<span class="op">,</span> <span class="dt">error</span><span class="op">:</span> <span class="kw">null</span> }</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>})()</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">// --- JavaScript preview ----------------------------------------------------</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>jsPreview <span class="op">=</span> <span class="fu">html</span><span class="vs">`&lt;pre style="padding: 1rem; border: 1px solid #ddd; border-radius: 0.25rem; background-color: #f8f9fa; max-height: 18rem; overflow: auto;"&gt;</span><span class="sc">${</span>compiled<span class="op">.</span><span class="at">js</span> <span class="op">||</span> <span class="st">"// JavaScript output will appear here"</span><span class="sc">}</span><span class="vs">&lt;/pre&gt;`</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Execution and console capture ----------------------------------------</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co">// Execute the compiled JavaScript in a sandboxed function scope and capture</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co">// console.log output for display. This is for local experimentation only.</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>runResult <span class="op">=</span> (() <span class="kw">=&gt;</span> {</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> container <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">"div"</span>)</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    container<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">padding</span> <span class="op">=</span> <span class="st">"1rem"</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    container<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">border</span> <span class="op">=</span> <span class="st">"1px solid #ddd"</span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    container<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">borderRadius</span> <span class="op">=</span> <span class="st">"0.25rem"</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    container<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">backgroundColor</span> <span class="op">=</span> <span class="st">"#ffffff"</span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (compiled<span class="op">.</span><span class="at">error</span>) {</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>        container<span class="op">.</span><span class="at">innerHTML</span> <span class="op">=</span> <span class="vs">`&lt;strong&gt;Compile error:&lt;/strong&gt; </span><span class="sc">${</span>compiled<span class="op">.</span><span class="at">error</span><span class="sc">}</span><span class="vs">`</span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> container</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> logs <span class="op">=</span> []</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> originalLog <span class="op">=</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span> <span class="op">=</span> (<span class="op">...</span>args) <span class="kw">=&gt;</span> {</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>        logs<span class="op">.</span><span class="fu">push</span>(args<span class="op">.</span><span class="fu">join</span>(<span class="st">" "</span>))</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>        <span class="fu">originalLog</span>(<span class="op">...</span>args)</span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> {</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> fn <span class="op">=</span> <span class="kw">new</span> <span class="bu">Function</span>(compiled<span class="op">.</span><span class="at">js</span>)</span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>        <span class="fu">fn</span>()</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> text <span class="op">=</span> logs<span class="op">.</span><span class="at">length</span></span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>            <span class="op">?</span> logs<span class="op">.</span><span class="fu">join</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>            <span class="op">:</span> <span class="st">"(no console.log output)"</span></span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>        container<span class="op">.</span><span class="at">innerHTML</span> <span class="op">=</span> <span class="vs">`&lt;strong&gt;Console output:&lt;/strong&gt;</span><span class="sc">\n</span><span class="vs">&lt;pre style="margin-top: 0.5rem; white-space: pre-wrap;"&gt;</span><span class="sc">${</span>text<span class="sc">}</span><span class="vs">&lt;/pre&gt;`</span></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">catch</span> (error) {</span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>        container<span class="op">.</span><span class="at">innerHTML</span> <span class="op">=</span> <span class="vs">`&lt;strong&gt;Runtime error:&lt;/strong&gt; </span><span class="sc">${</span>error<span class="sc">}</span><span class="vs">`</span></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">finally</span> {</span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>        <span class="bu">console</span><span class="op">.</span><span class="fu">log</span> <span class="op">=</span> originalLog</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> container</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>})()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Lazy loader for the TypeScript compiler ------------------------------</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>loadTypeScript <span class="op">=</span> (url <span class="op">=</span> <span class="st">"https://unpkg.com/typescript@5.4.5/lib/typescript.js"</span>) <span class="kw">=&gt;</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="bu">Promise</span>((resolve<span class="op">,</span> reject) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="bu">window</span><span class="op">.</span><span class="at">ts</span>) <span class="cf">return</span> <span class="fu">resolve</span>(<span class="bu">window</span><span class="op">.</span><span class="at">ts</span>)<span class="op">;</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> s <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">"script"</span>)<span class="op">;</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        s<span class="op">.</span><span class="at">src</span> <span class="op">=</span> url<span class="op">;</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        s<span class="op">.</span><span class="at">async</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>        s<span class="op">.</span><span class="at">onload</span> <span class="op">=</span> () <span class="kw">=&gt;</span> <span class="fu">resolve</span>(<span class="bu">window</span><span class="op">.</span><span class="at">ts</span>)<span class="op">;</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        s<span class="op">.</span><span class="at">onerror</span> <span class="op">=</span> reject<span class="op">;</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        <span class="bu">document</span><span class="op">.</span><span class="at">head</span><span class="op">.</span><span class="fu">appendChild</span>(s)<span class="op">;</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Run button (manual trigger) ------------------------------------------</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>viewof runNotebook <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">button</span>(<span class="st">"</span><span class="sc">\u25b6</span><span class="st">"</span>)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Result cell: only re-runs when Run is clicked ------------------------</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>notebookResult <span class="op">=</span> {</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> clicks <span class="op">=</span> runNotebook</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (clicks <span class="op">==</span> <span class="kw">null</span> <span class="op">||</span> clicks <span class="op">===</span> <span class="dv">0</span>) {</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">html</span><span class="vs">`&lt;div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;"&gt;&lt;/div&gt;`</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> textarea <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"ts-notebook-editor"</span>)</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> code <span class="op">=</span> textarea <span class="op">?</span> textarea<span class="op">.</span><span class="at">value</span> <span class="op">:</span> <span class="st">""</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> js</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> {</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> ts <span class="op">=</span> <span class="cf">await</span> <span class="fu">loadTypeScript</span>()</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> out <span class="op">=</span> ts<span class="op">.</span><span class="fu">transpileModule</span>(code<span class="op">,</span> {</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>            <span class="dt">compilerOptions</span><span class="op">:</span> {</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>                <span class="dt">module</span><span class="op">:</span> ts<span class="op">.</span><span class="at">ModuleKind</span><span class="op">.</span><span class="at">None</span><span class="op">,</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>                <span class="dt">target</span><span class="op">:</span> ts<span class="op">.</span><span class="at">ScriptTarget</span><span class="op">.</span><span class="at">ES2018</span><span class="op">,</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>                <span class="dt">sourceMap</span><span class="op">:</span> <span class="kw">false</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>        js <span class="op">=</span> out<span class="op">.</span><span class="at">outputText</span></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">catch</span> (e) {</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">html</span><span class="vs">`&lt;div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;"&gt;</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;pre style="margin:0;color:#b30000;white-space:pre-wrap;"&gt;[Transpile error]</span><span class="sc">\n${</span><span class="bu">String</span>(e<span class="op">?.</span><span class="at">stack</span> <span class="op">||</span> e)<span class="sc">}</span><span class="vs">&lt;/pre&gt;</span></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a><span class="vs">        &lt;/div&gt;`</span></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> logs <span class="op">=</span> []</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> originalLog <span class="op">=</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span> <span class="op">=</span> (<span class="op">...</span>args) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>        logs<span class="op">.</span><span class="fu">push</span>(args<span class="op">.</span><span class="fu">map</span>(x <span class="kw">=&gt;</span> <span class="bu">String</span>(x))<span class="op">.</span><span class="fu">join</span>(<span class="st">" "</span>))</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>        <span class="fu">originalLog</span>(<span class="op">...</span>args)</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> error <span class="op">=</span> <span class="kw">null</span></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> {</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> fn <span class="op">=</span> <span class="kw">new</span> <span class="bu">Function</span>(<span class="st">"exports"</span><span class="op">,</span> js)</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>        <span class="fu">fn</span>({})</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">catch</span> (e) {</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>        error <span class="op">=</span> e</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">finally</span> {</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>        <span class="bu">console</span><span class="op">.</span><span class="fu">log</span> <span class="op">=</span> originalLog</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (error) {</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">html</span><span class="vs">`&lt;div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;"&gt;</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="vs">            &lt;pre style="margin:0;color:#b30000;white-space:pre-wrap;"&gt;[Runtime error]</span><span class="sc">\n${</span><span class="bu">String</span>(error<span class="op">?.</span><span class="at">stack</span> <span class="op">||</span> error)<span class="sc">}</span><span class="vs">&lt;/pre&gt;</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="vs">        &lt;/div&gt;`</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> text <span class="op">=</span> logs<span class="op">.</span><span class="at">length</span> <span class="op">?</span> logs<span class="op">.</span><span class="fu">join</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>) <span class="op">:</span> <span class="st">"(no console.log output)"</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">html</span><span class="vs">`&lt;div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;"&gt;</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="vs">        &lt;pre style="margin:0;white-space:pre-wrap;"&gt;</span><span class="sc">${</span>text<span class="sc">}</span><span class="vs">&lt;/pre&gt;</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="co">// --- Layout: editor + Run button + output ---------------------------------</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="fu">html</span><span class="vs">`&lt;div style="display:grid;gap:0.75rem;"&gt;</span></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div&gt;</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="vs">        &lt;div style="font:600 14px/1.4 system-ui;margin-bottom:4px;"&gt;TypeScript / JavaScript (editable)&lt;/div&gt;</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="vs">        </span><span class="sc">${</span>editor<span class="sc">}</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div&gt;</span><span class="sc">${</span>viewof runNotebook<span class="sc">}</span><span class="vs">&lt;/div&gt;</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div&gt;</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="vs">        &lt;div style="font:600 14px/1.4 system-ui;margin-bottom:4px;"&gt;Output&lt;/div&gt;</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="vs">        </span><span class="sc">${</span>notebookResult<span class="sc">}</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;/div&gt;`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <div id="ojs-cell-1-1" data-nodetype="declaration">
@@ -282,23 +326,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-6" data-nodetype="declaration">
+
 </div>
-<section id="how-to-use-this-notebook" class="level3">
-<h3 class="anchored" data-anchor-id="how-to-use-this-notebook">How to use this notebook</h3>
-<ol type="1">
-<li>Edit the TypeScript code in the “TypeScript source” textarea.</li>
-<li>The compiled JavaScript will appear in the preview block.</li>
-<li>The code is executed automatically and the captured <code>console.log</code> output is shown in the “Console output” box.</li>
-<li>Use this page as a personal scratchpad for small TypeScript experiments and notes. For real projects, copy working snippets into your main repository or a dedicated playground project.</li>
-</ol>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-1-7" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+</div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
 <script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6Ii8vIEltcG9ydCBPYnNlcnZhYmxlIElucHV0cyBmb3IgdGhlIGVkaXRvciBVSS5cbmltcG9ydCB7SW5wdXRzfSBmcm9tIFwiQG9ic2VydmFibGVocS9pbnB1dHNcIlxuXG4vLyAtLS0gVHlwZVNjcmlwdCBzb3VyY2UgaW5wdXQgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblxudmlld29mIHRzU291cmNlID0gSW5wdXRzLnRleHRhcmVhKHtcblx0bGFiZWw6IFwiVHlwZVNjcmlwdCBzb3VyY2VcIixcblx0dmFsdWU6IGAvLyBFeGFtcGxlIEphdmFTY3JpcHQgc25pcHBldFxcbi8vIEVkaXQgdGhpcyBjb2RlIGFuZCB0aGUgb3V0cHV0XFxuLy8gd2lsbCB1cGRhdGUgYXV0b21hdGljYWxseS5cXG5cXG5mdW5jdGlvbiBncmVldChuYW1lKSB7XFxuICByZXR1cm4gXCJIZWxsbywgXCIgKyBuYW1lICsgXCIhXCJcXG59XFxuXFxuY29uc3QgbWVzc2FnZSA9IGdyZWV0KFwid29ybGRcIilcXG5jb25zb2xlLmxvZyhtZXNzYWdlKVxcbmAsXG5cdHJvd3M6IDE2LFxuXHRzcGVsbGNoZWNrOiBmYWxzZVxufSlcblxuLy8gLS0tIENvbXBpbGF0aW9uIHRvIEphdmFTY3JpcHQgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblxuLy8gRm9yIG1heGltdW0gY29tcGF0aWJpbGl0eSB3aXRoIHRoZSBRdWFydG8gT0pTIHJ1bnRpbWUsIHRoaXMgbm90ZWJvb2tcbi8vIGN1cnJlbnRseSBleGVjdXRlcyB0aGUgc291cmNlIGRpcmVjdGx5IGFzIEphdmFTY3JpcHQgd2l0aG91dCBhIHNlcGFyYXRlXG4vLyBUeXBlU2NyaXB0IGNvbXBpbGF0aW9uIHN0ZXAuIFR5cGVTY3JpcHQtb25seSBzeW50YXggKHN1Y2ggYXMgdHlwZVxuLy8gYW5ub3RhdGlvbnMpIG1heSB0aGVyZWZvcmUgY2F1c2UgcnVudGltZSBlcnJvcnMuXG5jb21waWxlZCA9ICgoKSA9PiB7XG5cdHJldHVybiB7IGpzOiB0c1NvdXJjZSwgZXJyb3I6IG51bGwgfVxufSkoKVxuXG4vLyAtLS0gSmF2YVNjcmlwdCBwcmV2aWV3IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblxuanNQcmV2aWV3ID0gaHRtbGA8cHJlIHN0eWxlPVwicGFkZGluZzogMXJlbTsgYm9yZGVyOiAxcHggc29saWQgI2RkZDsgYm9yZGVyLXJhZGl1czogMC4yNXJlbTsgYmFja2dyb3VuZC1jb2xvcjogI2Y4ZjlmYTsgbWF4LWhlaWdodDogMThyZW07IG92ZXJmbG93OiBhdXRvO1wiPiR7Y29tcGlsZWQuanMgfHwgXCIvLyBKYXZhU2NyaXB0IG91dHB1dCB3aWxsIGFwcGVhciBoZXJlXCJ9PC9wcmU+YFxuXG4vLyAtLS0gRXhlY3V0aW9uIGFuZCBjb25zb2xlIGNhcHR1cmUgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuXG4vLyBFeGVjdXRlIHRoZSBjb21waWxlZCBKYXZhU2NyaXB0IGluIGEgc2FuZGJveGVkIGZ1bmN0aW9uIHNjb3BlIGFuZCBjYXB0dXJlXG4vLyBjb25zb2xlLmxvZyBvdXRwdXQgZm9yIGRpc3BsYXkuIFRoaXMgaXMgZm9yIGxvY2FsIGV4cGVyaW1lbnRhdGlvbiBvbmx5LlxucnVuUmVzdWx0ID0gKCgpID0+IHtcblx0Y29uc3QgY29udGFpbmVyID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcImRpdlwiKVxuXHRjb250YWluZXIuc3R5bGUucGFkZGluZyA9IFwiMXJlbVwiXG5cdGNvbnRhaW5lci5zdHlsZS5ib3JkZXIgPSBcIjFweCBzb2xpZCAjZGRkXCJcblx0Y29udGFpbmVyLnN0eWxlLmJvcmRlclJhZGl1cyA9IFwiMC4yNXJlbVwiXG5cdGNvbnRhaW5lci5zdHlsZS5iYWNrZ3JvdW5kQ29sb3IgPSBcIiNmZmZmZmZcIlxuXG5cdGlmIChjb21waWxlZC5lcnJvcikge1xuXHRcdGNvbnRhaW5lci5pbm5lckhUTUwgPSBgPHN0cm9uZz5Db21waWxlIGVycm9yOjwvc3Ryb25nPiAke2NvbXBpbGVkLmVycm9yfWBcblx0XHRyZXR1cm4gY29udGFpbmVyXG5cdH1cblxuXHRjb25zdCBsb2dzID0gW11cblx0Y29uc3Qgb3JpZ2luYWxMb2cgPSBjb25zb2xlLmxvZ1xuXHRjb25zb2xlLmxvZyA9ICguLi5hcmdzKSA9PiB7XG5cdFx0bG9ncy5wdXNoKGFyZ3Muam9pbihcIiBcIikpXG5cdFx0b3JpZ2luYWxMb2coLi4uYXJncylcblx0fVxuXG5cdHRyeSB7XG5cdFx0Y29uc3QgZm4gPSBuZXcgRnVuY3Rpb24oY29tcGlsZWQuanMpXG5cdFx0Zm4oKVxuXHRcdGNvbnN0IHRleHQgPSBsb2dzLmxlbmd0aFxuXHRcdFx0PyBsb2dzLmpvaW4oXCJcXG5cIilcblx0XHRcdDogXCIobm8gY29uc29sZS5sb2cgb3V0cHV0KVwiXG5cdFx0Y29udGFpbmVyLmlubmVySFRNTCA9IGA8c3Ryb25nPkNvbnNvbGUgb3V0cHV0Ojwvc3Ryb25nPlxcbjxwcmUgc3R5bGU9XCJtYXJnaW4tdG9wOiAwLjVyZW07IHdoaXRlLXNwYWNlOiBwcmUtd3JhcDtcIj4ke3RleHR9PC9wcmU+YFxuXHR9IGNhdGNoIChlcnJvcikge1xuXHRcdGNvbnRhaW5lci5pbm5lckhUTUwgPSBgPHN0cm9uZz5SdW50aW1lIGVycm9yOjwvc3Ryb25nPiAke2Vycm9yfWBcblx0fSBmaW5hbGx5IHtcblx0XHRjb25zb2xlLmxvZyA9IG9yaWdpbmFsTG9nXG5cdH1cblxuXHRyZXR1cm4gY29udGFpbmVyXG59KSgpXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ3RzU291cmNlJykifV19
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImltcG9ydCB7SW5wdXRzfSBmcm9tIFwiQG9ic2VydmFibGVocS9pbnB1dHNcIlxuXG4vLyAtLS0gRWRpdGFibGUgVHlwZVNjcmlwdCAvIEphdmFTY3JpcHQgc291cmNlIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblxuREVGQVVMVF9UU19OT1RFQk9PS19DT0RFID0gW1xuXHRcIi8vIEV4YW1wbGUgVHlwZVNjcmlwdCBzbmlwcGV0IChlZGl0IG1lKVwiLFxuXHRcIi8vIENvZGUgd2lsbCBydW4gT05MWSB3aGVuIHlvdSBjbGljayB0aGUgUnVuIGJ1dHRvbi5cIixcblx0XCJcIixcblx0XCJleHBvcnQgZnVuY3Rpb24gZ3JlZXQobmFtZTogc3RyaW5nKTogc3RyaW5nIHtcIixcblx0XCIgIHJldHVybiBgSGVsbG8sICR7bmFtZX0hYDtcIixcblx0XCJ9XCIsXG5cdFwiXCIsXG5cdFwiY29uc29sZS5sb2coZ3JlZXQoXFxcIm5vdGVib29rXFxcIikpO1wiXG5dLmpvaW4oXCJcXG5cIilcblxuZWRpdG9yID0gaHRtbGA8dGV4dGFyZWEgaWQ9XCJ0cy1ub3RlYm9vay1lZGl0b3JcIlxuXHRzcGVsbGNoZWNrPVwiZmFsc2VcIlxuXHRzdHlsZT1cIndpZHRoOjEwMCU7bWluLWhlaWdodDoyMjBweDtmb250LWZhbWlseTp1aS1tb25vc3BhY2UsIFNGTW9uby1SZWd1bGFyLCBNZW5sbywgTW9uYWNvLCBDb25zb2xhcywgJ0xpYmVyYXRpb24gTW9ubycsICdDb3VyaWVyIE5ldycsIG1vbm9zcGFjZTtmb250LXNpemU6MTNweDtsaW5lLWhlaWdodDoxLjU7Ym9yZGVyOjFweCBzb2xpZCAjZGRkO2JvcmRlci1yYWRpdXM6NnB4O3BhZGRpbmc6OHB4O1wiPiR7REVGQVVMVF9UU19OT1RFQk9PS19DT0RFfTwvdGV4dGFyZWE+YFxuXG4vLyAtLS0gTGF6eSBsb2FkZXIgZm9yIHRoZSBUeXBlU2NyaXB0IGNvbXBpbGVyIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuXG5sb2FkVHlwZVNjcmlwdCA9ICh1cmwgPSBcImh0dHBzOi8vdW5wa2cuY29tL3R5cGVzY3JpcHRANS40LjUvbGliL3R5cGVzY3JpcHQuanNcIikgPT5cblx0bmV3IFByb21pc2UoKHJlc29sdmUsIHJlamVjdCkgPT4ge1xuXHRcdGlmICh3aW5kb3cudHMpIHJldHVybiByZXNvbHZlKHdpbmRvdy50cyk7XG5cdFx0Y29uc3QgcyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJzY3JpcHRcIik7XG5cdFx0cy5zcmMgPSB1cmw7XG5cdFx0cy5hc3luYyA9IHRydWU7XG5cdFx0cy5vbmxvYWQgPSAoKSA9PiByZXNvbHZlKHdpbmRvdy50cyk7XG5cdFx0cy5vbmVycm9yID0gcmVqZWN0O1xuXHRcdGRvY3VtZW50LmhlYWQuYXBwZW5kQ2hpbGQocyk7XG5cdH0pXG5cbi8vIC0tLSBSdW4gYnV0dG9uIChtYW51YWwgdHJpZ2dlcikgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5cbnZpZXdvZiBydW5Ob3RlYm9vayA9IElucHV0cy5idXR0b24oXCJcXHUyNWI2XCIpXG5cbi8vIC0tLSBSZXN1bHQgY2VsbDogb25seSByZS1ydW5zIHdoZW4gUnVuIGlzIGNsaWNrZWQgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5cbm5vdGVib29rUmVzdWx0ID0ge1xuXHRjb25zdCBjbGlja3MgPSBydW5Ob3RlYm9va1xuXG5cdGlmIChjbGlja3MgPT0gbnVsbCB8fCBjbGlja3MgPT09IDApIHtcblx0XHRyZXR1cm4gaHRtbGA8ZGl2IHN0eWxlPVwibWluLWhlaWdodDozcmVtO2JvcmRlcjoxcHggc29saWQgI2U1ZTdlYjtib3JkZXItcmFkaXVzOjZweDtwYWRkaW5nOjAuNXJlbTtiYWNrZ3JvdW5kLWNvbG9yOiNmYWZhZmE7XCI+PC9kaXY+YFxuXHR9XG5cblx0Y29uc3QgdGV4dGFyZWEgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcInRzLW5vdGVib29rLWVkaXRvclwiKVxuXHRjb25zdCBjb2RlID0gdGV4dGFyZWEgPyB0ZXh0YXJlYS52YWx1ZSA6IFwiXCJcblxuXHRsZXQganNcblx0dHJ5IHtcblx0XHRjb25zdCB0cyA9IGF3YWl0IGxvYWRUeXBlU2NyaXB0KClcblx0XHRjb25zdCBvdXQgPSB0cy50cmFuc3BpbGVNb2R1bGUoY29kZSwge1xuXHRcdFx0Y29tcGlsZXJPcHRpb25zOiB7XG5cdFx0XHRcdG1vZHVsZTogdHMuTW9kdWxlS2luZC5Ob25lLFxuXHRcdFx0XHR0YXJnZXQ6IHRzLlNjcmlwdFRhcmdldC5FUzIwMTgsXG5cdFx0XHRcdHNvdXJjZU1hcDogZmFsc2Vcblx0XHRcdH1cblx0XHR9KVxuXHRcdGpzID0gb3V0Lm91dHB1dFRleHRcblx0fSBjYXRjaCAoZSkge1xuXHRcdHJldHVybiBodG1sYDxkaXYgc3R5bGU9XCJtaW4taGVpZ2h0OjNyZW07Ym9yZGVyOjFweCBzb2xpZCAjZTVlN2ViO2JvcmRlci1yYWRpdXM6NnB4O3BhZGRpbmc6MC41cmVtO2JhY2tncm91bmQtY29sb3I6I2ZhZmFmYTtcIj5cblx0XHRcdDxwcmUgc3R5bGU9XCJtYXJnaW46MDtjb2xvcjojYjMwMDAwO3doaXRlLXNwYWNlOnByZS13cmFwO1wiPltUcmFuc3BpbGUgZXJyb3JdXFxuJHtTdHJpbmcoZT8uc3RhY2sgfHwgZSl9PC9wcmU+XG5cdFx0PC9kaXY+YFxuXHR9XG5cblx0Y29uc3QgbG9ncyA9IFtdXG5cdGNvbnN0IG9yaWdpbmFsTG9nID0gY29uc29sZS5sb2dcblx0Y29uc29sZS5sb2cgPSAoLi4uYXJncykgPT4ge1xuXHRcdGxvZ3MucHVzaChhcmdzLm1hcCh4ID0+IFN0cmluZyh4KSkuam9pbihcIiBcIikpXG5cdFx0b3JpZ2luYWxMb2coLi4uYXJncylcblx0fVxuXG5cdGxldCBlcnJvciA9IG51bGxcblx0dHJ5IHtcblx0XHRjb25zdCBmbiA9IG5ldyBGdW5jdGlvbihcImV4cG9ydHNcIiwganMpXG5cdFx0Zm4oe30pXG5cdH0gY2F0Y2ggKGUpIHtcblx0XHRlcnJvciA9IGVcblx0fSBmaW5hbGx5IHtcblx0XHRjb25zb2xlLmxvZyA9IG9yaWdpbmFsTG9nXG5cdH1cblxuXHRpZiAoZXJyb3IpIHtcblx0XHRyZXR1cm4gaHRtbGA8ZGl2IHN0eWxlPVwibWluLWhlaWdodDozcmVtO2JvcmRlcjoxcHggc29saWQgI2U1ZTdlYjtib3JkZXItcmFkaXVzOjZweDtwYWRkaW5nOjAuNXJlbTtiYWNrZ3JvdW5kLWNvbG9yOiNmYWZhZmE7XCI+XG5cdFx0XHQ8cHJlIHN0eWxlPVwibWFyZ2luOjA7Y29sb3I6I2IzMDAwMDt3aGl0ZS1zcGFjZTpwcmUtd3JhcDtcIj5bUnVudGltZSBlcnJvcl1cXG4ke1N0cmluZyhlcnJvcj8uc3RhY2sgfHwgZXJyb3IpfTwvcHJlPlxuXHRcdDwvZGl2PmBcblx0fVxuXG5cdGNvbnN0IHRleHQgPSBsb2dzLmxlbmd0aCA/IGxvZ3Muam9pbihcIlxcblwiKSA6IFwiKG5vIGNvbnNvbGUubG9nIG91dHB1dClcIlxuXHRyZXR1cm4gaHRtbGA8ZGl2IHN0eWxlPVwibWluLWhlaWdodDozcmVtO2JvcmRlcjoxcHggc29saWQgI2U1ZTdlYjtib3JkZXItcmFkaXVzOjZweDtwYWRkaW5nOjAuNXJlbTtiYWNrZ3JvdW5kLWNvbG9yOiNmYWZhZmE7XCI+XG5cdFx0PHByZSBzdHlsZT1cIm1hcmdpbjowO3doaXRlLXNwYWNlOnByZS13cmFwO1wiPiR7dGV4dH08L3ByZT5cblx0PC9kaXY+YFxufVxuXG4vLyAtLS0gTGF5b3V0OiBlZGl0b3IgKyBSdW4gYnV0dG9uICsgb3V0cHV0IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuXG5odG1sYDxkaXYgc3R5bGU9XCJkaXNwbGF5OmdyaWQ7Z2FwOjAuNzVyZW07XCI+XG5cdDxkaXY+XG5cdFx0PGRpdiBzdHlsZT1cImZvbnQ6NjAwIDE0cHgvMS40IHN5c3RlbS11aTttYXJnaW4tYm90dG9tOjRweDtcIj5UeXBlU2NyaXB0IC8gSmF2YVNjcmlwdCAoZWRpdGFibGUpPC9kaXY+XG5cdFx0JHtlZGl0b3J9XG5cdDwvZGl2PlxuXHQ8ZGl2PiR7dmlld29mIHJ1bk5vdGVib29rfTwvZGl2PlxuXHQ8ZGl2PlxuXHRcdDxkaXYgc3R5bGU9XCJmb250OjYwMCAxNHB4LzEuNCBzeXN0ZW0tdWk7bWFyZ2luLWJvdHRvbTo0cHg7XCI+T3V0cHV0PC9kaXY+XG5cdFx0JHtub3RlYm9va1Jlc3VsdH1cblx0PC9kaXY+XG48L2Rpdj5gXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ3J1bk5vdGVib29rJykifV19
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }

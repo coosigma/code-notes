@@ -10,6 +10,8 @@ website:
         text: Notebook
       - href: pages/configure-next.qmd
         text: QFactory – Next.js Scaffold Configurator
+      - href: pages/ts-playground.qmd
+        text: TypeScript Playground
 
 format:
   html:

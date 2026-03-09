@@ -1,36 +1,38 @@
 ---
-title: "TypeScript notebook"
+title: "TypeScript Playground"
 format: html
 ---
 
-## Interactive TypeScript notebook (browser only)
+## TypeScript / JavaScript Playground
 
-This page is a secondary notebook for your TypeScript notes. Like the
-landing page, it only executes code when you click the Run button.
+This page lets you edit TypeScript or JavaScript and run it on demand.
+The code is executed only when you click the Run button.
 
 ```{ojs}
+// Import Observable Inputs (for the Run button and future controls).
 import {Inputs} from "@observablehq/inputs"
 
-// --- Editable TypeScript / JavaScript source -------------------------------
+// --- 1) Editable TS / JS source -------------------------------------------
 
-DEFAULT_TS_NOTES_CODE = [
-  "// Example TypeScript snippet for notes (edit me)",
+DEFAULT_CODE = [
+  "// You can write TypeScript or JavaScript here.",
+  "// The code will run ONLY when you click the Run button.",
   "",
-  "type User = { name: string }",
-  "",
-  "function describeUser(user: User): string {",
-  "  return `User: ${user.name}`;",
+  "export function greet(name: string): string {",
+  "  return `Hello, ${name}!`;",
   "}",
   "",
-  "console.log(describeUser({ name: \"Alice\" }));"
+  "console.log(greet(\"World\"));"
 ].join("\n")
 
-editor = html`<textarea id="ts-notes-editor"
+// Use a plain <textarea> so editing does NOT cause automatic re-runs.
+editor = html`<textarea id="ts-editor"
   spellcheck="false"
-  style="width:100%;min-height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;line-height:1.5;border:1px solid #ddd;border-radius:6px;padding:8px;">${DEFAULT_TS_NOTES_CODE}</textarea>`
+  style="width:100%;min-height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;line-height:1.5;border:1px solid #ddd;border-radius:6px;padding:8px;">${DEFAULT_CODE}</textarea>`
 
-// --- Lazy loader for the TypeScript compiler ------------------------------
+// --- 2) Lazy loader for the TypeScript compiler ---------------------------
 
+// Only load the TypeScript compiler the first time the user clicks Run.
 loadTypeScript = (url = "https://unpkg.com/typescript@5.4.5/lib/typescript.js") =>
   new Promise((resolve, reject) => {
     if (window.ts) return resolve(window.ts);
@@ -42,22 +44,25 @@ loadTypeScript = (url = "https://unpkg.com/typescript@5.4.5/lib/typescript.js") 
     document.head.appendChild(s);
   })
 
-// --- Run button (manual trigger) ------------------------------------------
+// --- 3) Run button (manual trigger) ---------------------------------------
 
-viewof runNotes = Inputs.button("\u25b6")
+viewof run = Inputs.button("\u25b6")
 
-// --- Result cell: only re-runs when Run is clicked ------------------------
+// --- 4) Result cell: re-runs ONLY when Run is clicked ---------------------
 
-notesResult = {
-  const clicks = runNotes
+runResult = {
+  // Depend on the Run button value, not the DOM element itself.
+  const clicks = run
 
+  // Before the first click, do NOT execute any user code.
   if (clicks == null || clicks === 0) {
     return html`<div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;"></div>`
   }
 
-  const textarea = document.getElementById("ts-notes-editor")
+  const textarea = document.getElementById("ts-editor")
   const code = textarea ? textarea.value : ""
 
+  // Transpile TS to JS using the compiler (JS is also accepted).
   let js
   try {
     const ts = await loadTypeScript()
@@ -75,6 +80,7 @@ notesResult = {
     </div>`
   }
 
+  // Execute JS in the current page and capture console.log output.
   const logs = []
   const originalLog = console.log
   console.log = (...args) => {
@@ -104,17 +110,16 @@ notesResult = {
   </div>`
 }
 
-// --- Layout: editor + Run button + output ---------------------------------
-
+// --- 5) Layout: editor + Run button + output ------------------------------
 html`<div style="display:grid;gap:0.75rem;">
   <div>
     <div style="font:600 14px/1.4 system-ui;margin-bottom:4px;">TypeScript / JavaScript (editable)</div>
     ${editor}
   </div>
-  <div>${viewof runNotes}</div>
+  <div>${viewof run}</div>
   <div>
     <div style="font:600 14px/1.4 system-ui;margin-bottom:4px;">Output</div>
-    ${notesResult}
+    ${runResult}
   </div>
 </div>`
 ```

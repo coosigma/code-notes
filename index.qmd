@@ -5,88 +5,116 @@ format: html
 
 ## Interactive TypeScript notebook (landing page)
 
-This site is your personal code notebook. The landing page provides a simple
-in-browser playground for TypeScript snippets. TypeScript source is compiled
-to JavaScript in the browser using the `typescript` compiler library and then
-executed. This is intended for small experiments and notes, not for
-untrusted code.
-
-All code and comments below are written in English. You can write your
-explanations in any language you like.
+This site is your personal code notebook. The landing page now behaves like a
+simple Jupyter-style cell: your code is only executed when you click the Run
+button. The default example uses real TypeScript with type annotations.
 
 ```{ojs}
-// Import Observable Inputs for the editor UI.
 import {Inputs} from "@observablehq/inputs"
 
-// --- TypeScript source input -----------------------------------------------
+// --- Editable TypeScript / JavaScript source -------------------------------
 
-viewof tsSource = Inputs.textarea({
-	label: "TypeScript source",
-	value: `// Example JavaScript snippet\n// Edit this code and the output\n// will update automatically.\n\nfunction greet(name) {\n  return "Hello, " + name + "!"\n}\n\nconst message = greet("world")\nconsole.log(message)\n`,
-	rows: 16,
-	spellcheck: false
-})
+DEFAULT_TS_NOTEBOOK_CODE = [
+	"// Example TypeScript snippet (edit me)",
+	"// Code will run ONLY when you click the Run button.",
+	"",
+	"export function greet(name: string): string {",
+	"  return `Hello, ${name}!`;",
+	"}",
+	"",
+	"console.log(greet(\"notebook\"));"
+].join("\n")
 
-// --- Compilation to JavaScript --------------------------------------------
+editor = html`<textarea id="ts-notebook-editor"
+	spellcheck="false"
+	style="width:100%;min-height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;line-height:1.5;border:1px solid #ddd;border-radius:6px;padding:8px;">${DEFAULT_TS_NOTEBOOK_CODE}</textarea>`
 
-// For maximum compatibility with the Quarto OJS runtime, this notebook
-// currently executes the source directly as JavaScript without a separate
-// TypeScript compilation step. TypeScript-only syntax (such as type
-// annotations) may therefore cause runtime errors.
-compiled = (() => {
-	return { js: tsSource, error: null }
-})()
+// --- Lazy loader for the TypeScript compiler ------------------------------
 
-// --- JavaScript preview ----------------------------------------------------
+loadTypeScript = (url = "https://unpkg.com/typescript@5.4.5/lib/typescript.js") =>
+	new Promise((resolve, reject) => {
+		if (window.ts) return resolve(window.ts);
+		const s = document.createElement("script");
+		s.src = url;
+		s.async = true;
+		s.onload = () => resolve(window.ts);
+		s.onerror = reject;
+		document.head.appendChild(s);
+	})
 
-jsPreview = html`<pre style="padding: 1rem; border: 1px solid #ddd; border-radius: 0.25rem; background-color: #f8f9fa; max-height: 18rem; overflow: auto;">${compiled.js || "// JavaScript output will appear here"}</pre>`
+// --- Run button (manual trigger) ------------------------------------------
 
-// --- Execution and console capture ----------------------------------------
+viewof runNotebook = Inputs.button("\u25b6")
 
-// Execute the compiled JavaScript in a sandboxed function scope and capture
-// console.log output for display. This is for local experimentation only.
-runResult = (() => {
-	const container = document.createElement("div")
-	container.style.padding = "1rem"
-	container.style.border = "1px solid #ddd"
-	container.style.borderRadius = "0.25rem"
-	container.style.backgroundColor = "#ffffff"
+// --- Result cell: only re-runs when Run is clicked ------------------------
 
-	if (compiled.error) {
-		container.innerHTML = `<strong>Compile error:</strong> ${compiled.error}`
-		return container
+notebookResult = {
+	const clicks = runNotebook
+
+	if (clicks == null || clicks === 0) {
+		return html`<div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;"></div>`
+	}
+
+	const textarea = document.getElementById("ts-notebook-editor")
+	const code = textarea ? textarea.value : ""
+
+	let js
+	try {
+		const ts = await loadTypeScript()
+		const out = ts.transpileModule(code, {
+			compilerOptions: {
+				module: ts.ModuleKind.None,
+				target: ts.ScriptTarget.ES2018,
+				sourceMap: false
+			}
+		})
+		js = out.outputText
+	} catch (e) {
+		return html`<div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;">
+			<pre style="margin:0;color:#b30000;white-space:pre-wrap;">[Transpile error]\n${String(e?.stack || e)}</pre>
+		</div>`
 	}
 
 	const logs = []
 	const originalLog = console.log
 	console.log = (...args) => {
-		logs.push(args.join(" "))
+		logs.push(args.map(x => String(x)).join(" "))
 		originalLog(...args)
 	}
 
+	let error = null
 	try {
-		const fn = new Function(compiled.js)
-		fn()
-		const text = logs.length
-			? logs.join("\n")
-			: "(no console.log output)"
-		container.innerHTML = `<strong>Console output:</strong>\n<pre style="margin-top: 0.5rem; white-space: pre-wrap;">${text}</pre>`
-	} catch (error) {
-		container.innerHTML = `<strong>Runtime error:</strong> ${error}`
+		const fn = new Function("exports", js)
+		fn({})
+	} catch (e) {
+		error = e
 	} finally {
 		console.log = originalLog
 	}
 
-	return container
-})()
+	if (error) {
+		return html`<div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;">
+			<pre style="margin:0;color:#b30000;white-space:pre-wrap;">[Runtime error]\n${String(error?.stack || error)}</pre>
+		</div>`
+	}
+
+	const text = logs.length ? logs.join("\n") : "(no console.log output)"
+	return html`<div style="min-height:3rem;border:1px solid #e5e7eb;border-radius:6px;padding:0.5rem;background-color:#fafafa;">
+		<pre style="margin:0;white-space:pre-wrap;">${text}</pre>
+	</div>`
+}
+
+// --- Layout: editor + Run button + output ---------------------------------
+
+html`<div style="display:grid;gap:0.75rem;">
+	<div>
+		<div style="font:600 14px/1.4 system-ui;margin-bottom:4px;">TypeScript / JavaScript (editable)</div>
+		${editor}
+	</div>
+	<div>${viewof runNotebook}</div>
+	<div>
+		<div style="font:600 14px/1.4 system-ui;margin-bottom:4px;">Output</div>
+		${notebookResult}
+	</div>
+</div>`
 ```
-
-### How to use this notebook
-
-1. Edit the TypeScript code in the "TypeScript source" textarea.
-2. The compiled JavaScript will appear in the preview block.
-3. The code is executed automatically and the captured `console.log` output
-	 is shown in the "Console output" box.
-4. Use this page as a personal scratchpad for small TypeScript experiments
-	 and notes. For real projects, copy working snippets into your main
-	 repository or a dedicated playground project.
