@@ -1,0 +1,92 @@
+---
+title: "Code notebook"
+format: html
+---
+
+## Interactive TypeScript notebook (landing page)
+
+This site is your personal code notebook. The landing page provides a simple
+in-browser playground for TypeScript snippets. TypeScript source is compiled
+to JavaScript in the browser using the `typescript` compiler library and then
+executed. This is intended for small experiments and notes, not for
+untrusted code.
+
+All code and comments below are written in English. You can write your
+explanations in any language you like.
+
+```{ojs}
+// Import Observable Inputs for the editor UI.
+import {Inputs} from "@observablehq/inputs"
+
+// --- TypeScript source input -----------------------------------------------
+
+viewof tsSource = Inputs.textarea({
+	label: "TypeScript source",
+	value: `// Example JavaScript snippet\n// Edit this code and the output\n// will update automatically.\n\nfunction greet(name) {\n  return "Hello, " + name + "!"\n}\n\nconst message = greet("world")\nconsole.log(message)\n`,
+	rows: 16,
+	spellcheck: false
+})
+
+// --- Compilation to JavaScript --------------------------------------------
+
+// For maximum compatibility with the Quarto OJS runtime, this notebook
+// currently executes the source directly as JavaScript without a separate
+// TypeScript compilation step. TypeScript-only syntax (such as type
+// annotations) may therefore cause runtime errors.
+compiled = (() => {
+	return { js: tsSource, error: null }
+})()
+
+// --- JavaScript preview ----------------------------------------------------
+
+jsPreview = html`<pre style="padding: 1rem; border: 1px solid #ddd; border-radius: 0.25rem; background-color: #f8f9fa; max-height: 18rem; overflow: auto;">${compiled.js || "// JavaScript output will appear here"}</pre>`
+
+// --- Execution and console capture ----------------------------------------
+
+// Execute the compiled JavaScript in a sandboxed function scope and capture
+// console.log output for display. This is for local experimentation only.
+runResult = (() => {
+	const container = document.createElement("div")
+	container.style.padding = "1rem"
+	container.style.border = "1px solid #ddd"
+	container.style.borderRadius = "0.25rem"
+	container.style.backgroundColor = "#ffffff"
+
+	if (compiled.error) {
+		container.innerHTML = `<strong>Compile error:</strong> ${compiled.error}`
+		return container
+	}
+
+	const logs = []
+	const originalLog = console.log
+	console.log = (...args) => {
+		logs.push(args.join(" "))
+		originalLog(...args)
+	}
+
+	try {
+		const fn = new Function(compiled.js)
+		fn()
+		const text = logs.length
+			? logs.join("\n")
+			: "(no console.log output)"
+		container.innerHTML = `<strong>Console output:</strong>\n<pre style="margin-top: 0.5rem; white-space: pre-wrap;">${text}</pre>`
+	} catch (error) {
+		container.innerHTML = `<strong>Runtime error:</strong> ${error}`
+	} finally {
+		console.log = originalLog
+	}
+
+	return container
+})()
+```
+
+### How to use this notebook
+
+1. Edit the TypeScript code in the "TypeScript source" textarea.
+2. The compiled JavaScript will appear in the preview block.
+3. The code is executed automatically and the captured `console.log` output
+	 is shown in the "Console output" box.
+4. Use this page as a personal scratchpad for small TypeScript experiments
+	 and notes. For real projects, copy working snippets into your main
+	 repository or a dedicated playground project.

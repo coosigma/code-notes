@@ -1,0 +1,17 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Code Notebook"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Notebook
+      - href: pages/configure-next.qmd
+        text: QFactory – Next.js Scaffold Configurator
+
+format:
+  html:
+    theme: default
+    toc: true

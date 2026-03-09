@@ -1,0 +1,138 @@
+---
+title: "Configure Next.js scaffold"
+format: html
+---
+
+## Interactive Next.js scaffold configuration
+
+This page uses Quarto's built-in support for Observable JS ({ojs}) to collect configuration inputs in the browser, generate a shell script as plain text, show a read-only preview, and provide a download link. The script is kept intentionally simple in Phase 1 so that it only checks Node.js, prints the chosen project name, and stops.
+
+All code and comments are written in English to keep the generated artifacts consistent.
+
+```{ojs}
+// Import Observable's standard input components.
+import {Inputs} from "@observablehq/inputs"
+
+// --- Project-level inputs ---------------------------------------------------
+
+viewof projectName = Inputs.text("Project name", {
+  label: "Project name",
+  placeholder: "my-next-app",
+  value: "my-next-app"
+})
+
+viewof packageManager = Inputs.select([
+  "pnpm",
+  "npm",
+  "yarn",
+  "bun"
+], {
+  label: "Package manager",
+  value: "pnpm"
+})
+
+// Feature toggles: these flags do not yet change the script in Phase 1,
+// but they establish the shape of the configuration for later phases.
+
+viewof useTypeScript = Inputs.toggle({
+  label: "Use TypeScript",
+  value: true
+})
+
+viewof useESLint = Inputs.toggle({
+  label: "Enable ESLint",
+  value: true
+})
+
+viewof useTailwind = Inputs.toggle({
+  label: "Enable Tailwind CSS",
+  value: true
+})
+
+viewof useAppRouter = Inputs.toggle({
+  label: "Use App Router (app/)",
+  value: true
+})
+
+viewof useSrcDir = Inputs.toggle({
+  label: "Use src/ directory",
+  value: true
+})
+
+viewof importAlias = Inputs.text("Import alias", {
+  label: "Import alias (for future use)",
+  placeholder: "@/*",
+  value: "@/*"
+})
+
+// --- Script generation (Phase 1 placeholder) -------------------------------
+
+// In Phase 1 the script only:
+// 1. Prints the Node.js version (or fails if Node.js is missing).
+// 2. Prints the target project name from the inputs above.
+// 3. Prints a placeholder line explaining that real scaffolding arrives in
+//    the next phase.
+//
+// The script is generated as a single string so it can be both previewed and
+// downloaded as a .sh file from the browser.
+
+script = `#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Checking Node.js installation..."
+node -v || {
+  echo "Node.js is not available. Please install Node.js (recommended: >= 18)." >&2
+  exit 1
+}
+
+echo "Target project name: ${projectName}"
+echo "Phase 1 placeholder: no Next.js scaffolding logic yet."
+`
+
+// --- Read-only preview ------------------------------------------------------
+
+// Render the generated script as read-only text in a <pre> block. This makes
+// it easy to inspect and copy without allowing in-place edits.
+preview = html`<pre style="padding: 1rem; border: 1px solid #ddd; border-radius: 0.25rem; background-color: #f8f9fa; max-height: 24rem; overflow: auto;">${script}</pre>`
+
+// --- Download link (Blob + <a download>) -----------------------------------
+
+// Create a fresh Blob and <a download> link for the current script contents.
+// When the script or inputs change, this cell re-runs and updates the target
+// file without requiring any server-side logic.
+downloadLink = {
+  const blob = new Blob([script], { type: "text/x-shellscript" })
+  const url = URL.createObjectURL(blob)
+
+  const link = document.createElement("a")
+  link.href = url
+  link.download = "scaffold-next.sh"
+  link.textContent = "Download scaffold-next.sh"
+  link.style.display = "inline-block"
+  link.style.marginTop = "0.5rem"
+
+  // Optional: simple styling so the link looks button-like.
+  link.style.padding = "0.5rem 0.75rem"
+  link.style.border = "1px solid #0d6efd"
+  link.style.borderRadius = "0.25rem"
+  link.style.backgroundColor = "#0d6efd"
+  link.style.color = "#ffffff"
+  link.style.textDecoration = "none"
+  link.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+  link.style.fontSize = "0.9rem"
+
+  return link
+}
+```
+
+### How to use this page
+
+1. Adjust the project name, package manager, and feature toggles as needed.
+2. Review the generated `scaffold-next.sh` content in the preview block.
+3. Use the "Download scaffold-next.sh" link to save the script locally.
+4. On the target machine, make the script executable and run it inside an empty directory:
+
+   - `chmod +x scaffold-next.sh`
+   - `./scaffold-next.sh`
+
+For Phase 1 the script will only check your Node.js installation and echo the chosen project name. Later phases will extend this script to call `create-next-app` with non-interactive flags, add Docker and Nginx assets, configure caching, and wire up observability.
