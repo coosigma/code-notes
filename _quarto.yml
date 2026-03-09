@@ -4,6 +4,7 @@ project:
 
 website:
   title: "Code Notebook"
+  site-url: "https://coosigma.github.io/code-notes"
   navbar:
     left:
       - href: index.qmd
