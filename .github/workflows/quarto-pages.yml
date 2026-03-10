@@ -21,6 +21,17 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Generate index (group pages by year)
+        run: npm run generate-index
+
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 

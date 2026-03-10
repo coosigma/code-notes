@@ -25,9 +25,34 @@ DEFAULT_TS_NOTES_CODE = [
   "console.log(describeUser({ name: \"Alice\" }));"
 ].join("\n")
 
-editor = html`<textarea id="ts-notes-editor"
-  spellcheck="false"
-  style="width:100%;min-height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;line-height:1.5;border:1px solid #ddd;border-radius:6px;padding:8px;">${DEFAULT_TS_NOTES_CODE}</textarea>`
+editor = html`<div style="display:flex;gap:0.5rem;align-items:flex-start;">
+  <textarea id="ts-notes-editor"
+    spellcheck="false"
+    style="width:100%;min-height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;line-height:1.5;border:1px solid #ddd;border-radius:6px;padding:8px;">${DEFAULT_TS_NOTES_CODE}</textarea>
+</div>`
+
+// Attach copy-to-clipboard behavior (runs in browser)
+copyManager = {
+  if (typeof window === 'undefined') return
+  function attach() {
+    const btn = document.getElementById('copy-code')
+    const ta = document.getElementById('ts-notes-editor')
+    if (!btn || !ta) return
+    const originalHTML = btn.innerHTML
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(ta.value)
+        btn.innerHTML = '✓'
+        setTimeout(() => { btn.innerHTML = originalHTML }, 900)
+      } catch (e) {
+        btn.innerHTML = '⚠'
+        setTimeout(() => { btn.innerHTML = originalHTML }, 900)
+      }
+    })
+  }
+  if (document.readyState === 'complete') attach(); else window.addEventListener('load', attach, { once: true })
+  return null
+}
 
 // --- Lazy loader for the TypeScript compiler ------------------------------
 
