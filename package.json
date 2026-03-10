@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "generate-index": "node scripts/generate-index.js"
+    "generate-index": "node scripts/generate-index.js",
+    "setup": "npm ci",
+    "presite:dev": "npm run generate-index",
+    "site:dev": "quarto render && quarto preview"
   }
 }
