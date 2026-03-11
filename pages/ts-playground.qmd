@@ -1,6 +1,8 @@
 ---
 title: "TypeScript Playground"
 format: html
+categories:
+  - utility
 ---
 
 ## TypeScript / JavaScript Playground

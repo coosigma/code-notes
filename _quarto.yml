@@ -17,5 +17,7 @@ website:
 
 format:
   html:
-    theme: default
+    theme: flatly
     toc: true
+    css: styles/custom.css
+

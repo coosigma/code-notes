@@ -1,6 +1,8 @@
 ---
 title: "Configure Next.js scaffold"
 format: html
+categories:
+  - utility
 ---
 
 ## Interactive Next.js scaffold configuration

@@ -1,0 +1,132 @@
+/* Simple, modern blog styles for Quarto site
+   - lightweight variables
+   - hero area, cards for listing pages, sidebar styling
+   - responsive grid
+*/
+:root{
+  --brand:#0d6efd;
+  --muted:#6b7280;
+  --bg:#ffffff;
+  --surface:#f8fafc;
+  --max-width:1100px;
+  --content-width:720px;
+  --radius:10px;
+  --accent:#0b74ff;
+  --sort-active:#60a5fa; /* lighter, friendly blue */
+  --sort-muted:rgba(2,6,23,0.18);
+  --card-border: rgba(15,23,42,0.06);
+}
+
+body.quarto-light{background:var(--bg);color:#0f172a;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+
+/* Container */
+.quarto-container{max-width:var(--max-width);margin:0 auto;padding:1.25rem}
+
+/* Hero */
+.hero{
+  background: linear-gradient(180deg, rgba(13,110,253,0.06), rgba(13,110,253,0.02));
+  border-radius: calc(var(--radius) + 2px);
+  padding:2rem;
+  margin-bottom:1.25rem;
+  display:flex;
+  gap:1rem;align-items:center;
+}
+.hero h1{margin:0;font-size:1.8rem}
+.hero p{margin:0;color:var(--muted)}
+
+/* Listing cards */
+.list-grid{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:900px){.list-grid{grid-template-columns:repeat(2,1fr)}}
+.card{background:var(--surface);border:1px solid var(--card-border);border-radius:8px;padding:1rem;display:flex;flex-direction:column;gap:0.5rem}
+.card h3{margin:0;font-size:1.05rem}
+.card .meta{color:var(--muted);font-size:0.9rem}
+.card p{margin:0;color:#0f172a}
+.card a.read-more{margin-top:auto;color:var(--brand);font-weight:600;text-decoration:none}
+
+/* Sidebar */
+.margin-sidebar{background:transparent;padding-left:0.75rem}
+.toc-active h2{font-size:0.95rem;margin-top:0}
+
+/* Buttons (copy icon) */
+button[aria-label]{background:white;border:1px solid #e6edf8;border-radius:8px;padding:6px;display:inline-flex;align-items:center;justify-content:center}
+
+/* Post content readability */
+.quarto-title-block .title{font-family:Inter, ui-sans-serif, system-ui;font-weight:700}
+.content{max-width:var(--content-width)}
+
+/* Small touches */
+a{color:var(--brand)}
+pre, code{background:#0f172a10;padding:0.25rem;border-radius:6px}
+
+/* Footer */
+.site-footer{color:var(--muted);font-size:0.9rem;margin-top:2rem;padding-top:1rem;border-top:1px solid #eef2f7}
+
+/* Index table styling */
+.index-table{width:100%;border-collapse:collapse;margin:0}
+.index-table th,.index-table td{padding:0.75rem 1rem;border:1px solid var(--card-border);text-align:left}
+.index-table thead th{background:linear-gradient(180deg, #f1f5f9, #eef2f7);font-weight:600}
+.index-table tbody tr:nth-child(even){background:rgba(15,23,42,0.02)}
+.index-table a{color:var(--brand);text-decoration:none}
+.index-table a:hover{text-decoration:underline}
+
+/* Scrollable wrapper for index tables */
+.index-table-wrap{max-height:360px;overflow-y:auto;border-radius:8px;border:1px solid var(--card-border);padding:0;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));position:relative}
+.index-table-wrap.scrolled{box-shadow:inset 0 6px 8px -6px rgba(2,6,23,0.12)}
+.index-table thead th{position:sticky;top:0;backdrop-filter: blur(4px);z-index:2}
+
+/* Optional: compact mode for dense lists */
+.index-table.compact th,.index-table.compact td{padding:0.45rem 0.75rem}
+
+/* Styled native scrollbar (WebKit) */
+.index-table-wrap::-webkit-scrollbar{width:10px}
+.index-table-wrap::-webkit-scrollbar-thumb{background:linear-gradient(180deg, #cbd5e1, #94a3b8);border-radius:8px}
+.index-table-wrap::-webkit-scrollbar-track{background:transparent}
+
+/* Anytype-like table appearance */
+.index-table.anytype{border:0;background:transparent}
+.index-table.anytype thead th{border-bottom:1px solid rgba(2,6,23,0.06);font-size:0.85rem;padding:0.5rem 0.75rem}
+.index-table.anytype tbody td{border-bottom:0;padding:0.6rem 0.75rem;vertical-align:middle}
+.index-table.anytype tbody tr{transition:background 120ms, transform 120ms}
+.index-table.anytype tbody tr:hover{background:linear-gradient(90deg, rgba(13,110,253,0.03), rgba(13,110,253,0.01))}
+.index-table.anytype tbody tr.selected{background:linear-gradient(90deg, rgba(11,116,255,0.06), rgba(11,116,255,0.03))}
+.index-table.anytype td .row-actions{opacity:0;transition:opacity 120ms}
+.index-table.anytype tbody tr:hover td .row-actions{opacity:1}
+.row-actions{display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+/* removed checkbox-related rules */
+/* columns: title | categories | created | updated | status */
+.index-table.anytype td:nth-child(1) a{font-weight:400;color:var(--brand)}
+.index-table.anytype td:nth-child(2){color:#6b7280;font-size:0.95rem}
+.index-table.anytype td:nth-child(3){color:var(--muted);font-size:0.95rem}
+.index-table.anytype td:nth-child(4){color:var(--muted);font-size:0.95rem}
+.index-table.anytype td.status{text-align:center;font-weight:400}
+.index-table.anytype td.status .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:0.8rem;font-weight:400}
+/* Accessible status colors (best-practice): Draft -> amber/neutral; Completed/Published -> green */
+.index-table.anytype td.status[data-status="draft"] .badge{background: #fff7ed; color: #92400e; border:1px solid rgba(249,115,22,0.12)}
+.index-table.anytype td.status[data-status="completed"] .badge{background: #ecfdf5; color: #065f46; border:1px solid rgba(16,185,129,0.12)}
+.index-table.anytype td.status[data-status="published"] .badge{background: #ecfdf5; color: #065f46; border:1px solid rgba(16,185,129,0.12)}
+.index-table.anytype td.status[data-status=""] .badge{background:transparent;color:var(--muted);border:1px solid rgba(2,6,23,0.04)}
+
+/* sortable header indicators */
+.index-table.anytype thead th[data-sort-key]{cursor:pointer;position:relative;padding-right:1.2rem}
+/* two-triangle indicator: up (::before) and down (::after). Use color to indicate active sort direction */
+.index-table.anytype thead th[data-sort-key]::before{content:"▲";position:absolute;right:8px;top:32%;font-size:0.62em;color:var(--sort-muted);line-height:0.8}
+.index-table.anytype thead th[data-sort-key]::after{content:"▼";position:absolute;right:8px;top:56%;font-size:0.62em;color:var(--sort-muted);line-height:0.8}
+.index-table.anytype thead th.sorted-asc::before{color:var(--sort-active)}
+.index-table.anytype thead th.sorted-asc::after{color:var(--sort-muted)}
+.index-table.anytype thead th.sorted-desc::after{color:var(--sort-active)}
+.index-table.anytype thead th.sorted-desc::before{color:var(--sort-muted)}
+
+/* Responsive: hide description on narrow screens */
+@media(max-width:800px){
+  .index-table.anytype td:nth-child(3){display:none}
+  .index-table.anytype thead th:nth-child(3){display:none}
+}
+
+/* Style for generated list fallback: make simple list items appear as cards */
+.list-grid ul{list-style:none;padding:0;margin:0;display:contents}
+.list-grid ul li{display:block}
+.list-grid ul li > a{font-weight:600;color:var(--brand);text-decoration:none}
+.list-grid ul li{background:var(--surface);border:1px solid var(--card-border);border-radius:8px;padding:1rem;margin-bottom:0.5rem}
+.list-grid ul li .meta{color:var(--muted);font-size:0.9rem;margin-left:0.5rem}
+.list-grid ul{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:900px){.list-grid ul{grid-template-columns:repeat(2,1fr)}}

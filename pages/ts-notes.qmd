@@ -1,6 +1,8 @@
 ---
 title: "TypeScript notebook"
 format: html
+categories:
+  - utility
 ---
 
 ## Interactive TypeScript notebook (browser only)
